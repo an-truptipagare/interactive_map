@@ -209,7 +209,9 @@
         console.log("Zoom level is :", zoom_level);
         switch (true) {
             case zoom_level <= 2:
-                clean_map();
+                // clean_map();
+                state_name = "";
+                state_fp = "";
                 svg.selectAll("path").remove();
                 load_states();
                 break;
@@ -254,51 +256,53 @@
 
     //load congress district
     function load_congress_d(state_fp) {
-        var postData1 = JSON.stringify({
-            state_fp: state_fp
-        });
-        d3.request(host + "/get_cd_data")
-            .header("Content-Type", "application/json")
-            .post(postData1, function (error, data) {
-                var cd_data = JSON.parse(data.response);
-                var featureElement = svg
-                    .selectAll("path")
-                    .data(cd_data)
-                    .enter()
-                    .append("path")
-                    .attr("class", "congress-d")
-                    .attr("style", "pointer-events:auto;");
-
-                map.on("moveend", update);
-
-                update();
-
-                function update() {
-                    featureElement
-                        .attr("d", path)
-                        // .attr('style', 'pointer-events:visiblePainted;')
-                        .on("mousemove", function (d) {
-                            console.log("d :", d.properties.NAMELSAD);
-                            tooltip.html("Congress Distict : " + d.properties.NAMELSAD);
-                            tooltip
-                                .attr("style", "display:block;")
-                                .attr(
-                                    "style",
-                                    "left:" +
-                                    (d3.event.clientX + 30) +
-                                    "px; top:" +
-                                    (d3.event.clientY - 30) +
-                                    "px"
-                                );
-                        })
-                        .on("mouseout", function () {
-                            tooltip.attr("style", "display:none;");
-                        });
-                }
-                congress_d = d3.selectAll(".congress-d");
-                // console.log("congress_d is :", congress_d);
-                return upper_sld;
+        if (state_fp != "") {
+            var postData1 = JSON.stringify({
+                state_fp: state_fp
             });
+            d3.request(host + "/get_cd_data")
+                .header("Content-Type", "application/json")
+                .post(postData1, function (error, data) {
+                    var cd_data = JSON.parse(data.response);
+                    var featureElement = svg
+                        .selectAll("path")
+                        .data(cd_data)
+                        .enter()
+                        .append("path")
+                        .attr("class", "congress-d")
+                        .attr("style", "pointer-events:auto;");
+
+                    map.on("moveend", update);
+
+                    update();
+
+                    function update() {
+                        featureElement
+                            .attr("d", path)
+                            // .attr('style', 'pointer-events:visiblePainted;')
+                            .on("mousemove", function (d) {
+                                console.log("d :", d.properties.NAMELSAD);
+                                tooltip.html("Congress Distict : " + d.properties.NAMELSAD);
+                                tooltip
+                                    .attr("style", "display:block;")
+                                    .attr(
+                                        "style",
+                                        "left:" +
+                                        (d3.event.clientX + 30) +
+                                        "px; top:" +
+                                        (d3.event.clientY - 30) +
+                                        "px"
+                                    );
+                            })
+                            .on("mouseout", function () {
+                                tooltip.attr("style", "display:none;");
+                            });
+                    }
+                    congress_d = d3.selectAll(".congress-d");
+                    // console.log("congress_d is :", congress_d);
+                    return upper_sld;
+                });
+        }
     }
 
     //load upper sld geojson
@@ -346,287 +350,303 @@
 
     //load upper sld geojson
     function load_upper_sld(state_name) {
-        var upper_sld_url = "/static/geojson/" + state_name + "/upper_sld.json";
-        if (UrlExists(upper_sld_url)) {
-            // console.log("state_name is :", state_name, upper_sld_url);
-            d3.json(upper_sld_url, function (error, data) {
-                var featureElement = svg
-                    .selectAll("path")
-                    .data(data.features)
-                    .enter()
-                    .append("path")
-                    .attr("class", "upper-sld")
-                    .attr("style", "pointer-events:auto;");
+        if (state_name != "") {
+            var upper_sld_url = "/static/geojson/" + state_name + "/upper_sld.json";
+            if (UrlExists(upper_sld_url)) {
+                // console.log("state_name is :", state_name, upper_sld_url);
+                d3.json(upper_sld_url, function (error, data) {
+                    var featureElement = svg
+                        .selectAll("path")
+                        .data(data.features)
+                        .enter()
+                        .append("path")
+                        .attr("class", "upper-sld")
+                        .attr("style", "pointer-events:auto;");
 
-                map.on("moveend", update);
+                    map.on("moveend", update);
 
-                update();
+                    update();
 
-                function update() {
-                    featureElement
-                        .attr("d", path)
-                        // .attr('style', 'pointer-events:visiblePainted;')
-                        .on("mousemove", function (d) {
-                            tooltip.html(
-                                "Upper Legislative District : " + d.properties.NAMELSAD
-                            );
-                            tooltip
-                                .attr("style", "display:block;")
-                                .attr(
-                                    "style",
-                                    "left:" +
-                                    (d3.event.clientX + 30) +
-                                    "px; top:" +
-                                    (d3.event.clientY - 30) +
-                                    "px"
+                    function update() {
+                        featureElement
+                            .attr("d", path)
+                            // .attr('style', 'pointer-events:visiblePainted;')
+                            .on("mousemove", function (d) {
+                                tooltip.html(
+                                    "Upper Legislative District : " + d.properties.NAMELSAD
                                 );
-                        })
-                        .on("mouseout", function () {
-                            tooltip.attr("style", "display:none;");
-                        });
-                }
-                upper_sld = d3.selectAll(".upper-sld");
-                return upper_sld;
-            });
+                                tooltip
+                                    .attr("style", "display:block;")
+                                    .attr(
+                                        "style",
+                                        "left:" +
+                                        (d3.event.clientX + 30) +
+                                        "px; top:" +
+                                        (d3.event.clientY - 30) +
+                                        "px"
+                                    );
+                            })
+                            .on("mouseout", function () {
+                                tooltip.attr("style", "display:none;");
+                            });
+                    }
+                    upper_sld = d3.selectAll(".upper-sld");
+                    return upper_sld;
+                });
+            }
         }
     }
 
     //load lower sld geojson
     function load_lower_sld(state_name) {
-        var lower_sld_url = "/static/geojson/" + state_name + "/lower_sld.json";
-        if (UrlExists(lower_sld_url)) {
-            d3.json(lower_sld_url, function (error, data) {
-                var featureElement = svg
-                    .selectAll("path")
-                    .data(data.features)
-                    .enter()
-                    .append("path")
-                    .attr("class", "lower-sld")
-                    .attr("style", "pointer-events:auto;");
+        if (state_name != "") {
+            var lower_sld_url = "/static/geojson/" + state_name + "/lower_sld.json";
+            if (UrlExists(lower_sld_url)) {
+                d3.json(lower_sld_url, function (error, data) {
+                    var featureElement = svg
+                        .selectAll("path")
+                        .data(data.features)
+                        .enter()
+                        .append("path")
+                        .attr("class", "lower-sld")
+                        .attr("style", "pointer-events:auto;");
 
-                map.on("moveend", update);
+                    map.on("moveend", update);
 
-                update();
+                    update();
 
-                function update() {
-                    featureElement
-                        .attr("d", path)
-                        .on("mousemove", function (d) {
-                            // console.log("d :", d.properties.NAMELSAD);
-                            tooltip.html(
-                                "Lower Legislative Districts : " + d.properties.NAMELSAD
-                            );
-                            tooltip
-                                .attr("style", "display:block;")
-                                .attr(
-                                    "style",
-                                    "left:" +
-                                    (d3.event.clientX + 30) +
-                                    "px; top:" +
-                                    (d3.event.clientY - 30) +
-                                    "px"
+                    function update() {
+                        featureElement
+                            .attr("d", path)
+                            .on("mousemove", function (d) {
+                                // console.log("d :", d.properties.NAMELSAD);
+                                tooltip.html(
+                                    "Lower Legislative Districts : " + d.properties.NAMELSAD
                                 );
-                        })
-                        .on("mouseout", function () {
-                            tooltip.attr("style", "display:none;");
-                        });
-                }
-                lower_sld = d3.selectAll(".lower-sld");
-            });
+                                tooltip
+                                    .attr("style", "display:block;")
+                                    .attr(
+                                        "style",
+                                        "left:" +
+                                        (d3.event.clientX + 30) +
+                                        "px; top:" +
+                                        (d3.event.clientY - 30) +
+                                        "px"
+                                    );
+                            })
+                            .on("mouseout", function () {
+                                tooltip.attr("style", "display:none;");
+                            });
+                    }
+                    lower_sld = d3.selectAll(".lower-sld");
+                });
+            }
         }
     }
 
     //load school district geojson
     function load_school_d(state_name) {
-        var school_d_url = "/static/geojson/" + state_name + "/school_d.json";
-        if (UrlExists(school_d_url)) {
-            d3.json(school_d_url, function (error, data) {
-                var featureElement = svg
-                    .selectAll("path")
-                    .data(data.features)
-                    .enter()
-                    .append("path")
-                    .attr("class", "school-d")
-                    .attr("style", "pointer-events:auto;");
+        if (state_name != "") {
+            var school_d_url = "/static/geojson/" + state_name + "/school_d.json";
+            if (UrlExists(school_d_url)) {
+                d3.json(school_d_url, function (error, data) {
+                    var featureElement = svg
+                        .selectAll("path")
+                        .data(data.features)
+                        .enter()
+                        .append("path")
+                        .attr("class", "school-d")
+                        .attr("style", "pointer-events:auto;");
 
-                map.on("moveend", update);
+                    map.on("moveend", update);
 
-                update();
+                    update();
 
-                function update() {
-                    featureElement
-                        .attr("d", path)
-                        .on("mousemove", function (d) {
-                            tooltip.html("School Districts : " + d.properties.NAME);
-                            tooltip
-                                .attr("style", "display:block;")
-                                .attr(
-                                    "style",
-                                    "left:" +
-                                    (d3.event.clientX + 30) +
-                                    "px; top:" +
-                                    (d3.event.clientY - 30) +
-                                    "px"
-                                );
-                        })
-                        .on("mouseout", function () {
-                            tooltip.attr("style", "display:none;");
-                        });
-                }
-                school_d = d3.selectAll(".school-d");
-                return school_d;
-            });
+                    function update() {
+                        featureElement
+                            .attr("d", path)
+                            .on("mousemove", function (d) {
+                                tooltip.html("School Districts : " + d.properties.NAME);
+                                tooltip
+                                    .attr("style", "display:block;")
+                                    .attr(
+                                        "style",
+                                        "left:" +
+                                        (d3.event.clientX + 30) +
+                                        "px; top:" +
+                                        (d3.event.clientY - 30) +
+                                        "px"
+                                    );
+                            })
+                            .on("mouseout", function () {
+                                tooltip.attr("style", "display:none;");
+                            });
+                    }
+                    school_d = d3.selectAll(".school-d");
+                    return school_d;
+                });
+            }
         }
     }
 
     //Load Sub Counties data
     function load_sub_county(state_name) {
-        var sub_county_url = "/static/geojson/" + state_name + "/sub_counties.json";
-        if (UrlExists(sub_county_url)) {
-            d3.json(sub_county_url, function (error, data) {
-                var featureElement = svg
-                    .selectAll("path")
-                    .data(data.features)
-                    .enter()
-                    .append("path")
-                    .attr("class", "sub-counties")
-                    .attr("style", "pointer-events:auto;");
+        if (state_name != "") {
+            var sub_county_url = "/static/geojson/" + state_name + "/sub_counties.json";
+            if (UrlExists(sub_county_url)) {
+                d3.json(sub_county_url, function (error, data) {
+                    var featureElement = svg
+                        .selectAll("path")
+                        .data(data.features)
+                        .enter()
+                        .append("path")
+                        .attr("class", "sub-counties")
+                        .attr("style", "pointer-events:auto;");
 
-                map.on("moveend", update);
+                    map.on("moveend", update);
 
-                update();
+                    update();
 
-                function update() {
-                    featureElement
-                        .attr("d", path)
-                        .text(function (d) {
-                            return d.properties.NAME;
-                        })
-                        .on("mousemove", function (d) {
-                            console.log("d :", d.properties.NAME);
-                            tooltip.html("Sub County : " + d.properties.NAME);
-                            tooltip
-                                .attr("style", "display:block;")
-                                .attr(
-                                    "style",
-                                    "left:" +
-                                    (d3.event.clientX + 30) +
-                                    "px; top:" +
-                                    (d3.event.clientY - 30) +
-                                    "px"
-                                );
-                        })
-                        .on("mouseout", function () {
-                            tooltip.attr("style", "display:none;");
-                        });
-                }
-                sub_counties = d3.selectAll(".sub-counties");
-                return sub_counties;
-            });
+                    function update() {
+                        featureElement
+                            .attr("d", path)
+                            .text(function (d) {
+                                return d.properties.NAME;
+                            })
+                            .on("mousemove", function (d) {
+                                console.log("d :", d.properties.NAME);
+                                tooltip.html("Sub County : " + d.properties.NAME);
+                                tooltip
+                                    .attr("style", "display:block;")
+                                    .attr(
+                                        "style",
+                                        "left:" +
+                                        (d3.event.clientX + 30) +
+                                        "px; top:" +
+                                        (d3.event.clientY - 30) +
+                                        "px"
+                                    );
+                            })
+                            .on("mouseout", function () {
+                                tooltip.attr("style", "display:none;");
+                            });
+                    }
+                    sub_counties = d3.selectAll(".sub-counties");
+                    return sub_counties;
+                });
+            }
         }
     }
 
     //Load elementary school district
     function load_elsd(state_name) {
-        var elsd_url =
-            "/static/geojson/" + state_name + "/elementary_school_d.json";
-        if (UrlExists(elsd_url)) {
-            d3.json(elsd_url, function (error, data) {
-                var elsd_layer = L.geoJson(data, {
-                    onEachFeature: function (data, featureLayer) {
-                        featureLayer.setStyle({
-                            fillColor: "blue",
-                            fillOpacity: 0.3,
-                            weight: 0.3
-                        });
-                        featureLayer.bindTooltip(
-                            "Elementory School District : " + data.properties.NAME
-                        );
-                    }
-                }).addTo(map);
-            });
+        if (state_name != "") {
+            var elsd_url =
+                "/static/geojson/" + state_name + "/elementary_school_d.json";
+            if (UrlExists(elsd_url)) {
+                d3.json(elsd_url, function (error, data) {
+                    var elsd_layer = L.geoJson(data, {
+                        onEachFeature: function (data, featureLayer) {
+                            featureLayer.setStyle({
+                                fillColor: "blue",
+                                fillOpacity: 0.3,
+                                weight: 0.3
+                            });
+                            featureLayer.bindTooltip(
+                                "Elementory School District : " + data.properties.NAME
+                            );
+                        }
+                    }).addTo(map);
+                });
+            }
         }
     }
 
     //Load Concity cities
     function load_concity(state_name) {
-        var concity_url = "/static/geojson/" + state_name + "/concity.json";
-        if (UrlExists(concity_url)) {
-            d3.json(concity_url, function (error, data) {
-                var concity_url = L.geoJson(data, {
-                    onEachFeature: function (data, featureLayer) {
-                        featureLayer.setStyle({
-                            fillColor: "yellow",
-                            fillOpacity: 0.3,
-                            weight: 0.3
-                        });
-                        featureLayer.bindTooltip("Concity : " + data.properties.NAME);
-                    }
-                }).addTo(map);
-            });
+        if (state_name != "") {
+            var concity_url = "/static/geojson/" + state_name + "/concity.json";
+            if (UrlExists(concity_url)) {
+                d3.json(concity_url, function (error, data) {
+                    var concity_url = L.geoJson(data, {
+                        onEachFeature: function (data, featureLayer) {
+                            featureLayer.setStyle({
+                                fillColor: "yellow",
+                                fillOpacity: 0.3,
+                                weight: 0.3
+                            });
+                            featureLayer.bindTooltip("Concity : " + data.properties.NAME);
+                        }
+                    }).addTo(map);
+                });
+            }
         }
     }
 
     //Load Secondary school district
     function load_scsd(state_name) {
-        var scsd_url = "/static/geojson/" + state_name + "/secondary_school_d.json";
-        if (UrlExists(scsd_url)) {
-            d3.json(scsd_url, function (error, data) {
-                var elsd_layer = L.geoJson(data, {
-                    onEachFeature: function (data, featureLayer) {
-                        featureLayer.setStyle({
-                            fillColor: "green",
-                            fillOpacity: 0.3,
-                            weight: 0.3
-                        });
-                        featureLayer.bindTooltip(data.properties.NAME);
-                    }
-                }).addTo(map);
-            });
+        if (state_name != "") {
+            var scsd_url = "/static/geojson/" + state_name + "/secondary_school_d.json";
+            if (UrlExists(scsd_url)) {
+                d3.json(scsd_url, function (error, data) {
+                    var elsd_layer = L.geoJson(data, {
+                        onEachFeature: function (data, featureLayer) {
+                            featureLayer.setStyle({
+                                fillColor: "green",
+                                fillOpacity: 0.3,
+                                weight: 0.3
+                            });
+                            featureLayer.bindTooltip(data.properties.NAME);
+                        }
+                    }).addTo(map);
+                });
+            }
         }
     }
 
     //Load Places
     function load_places(state_name) {
-        var place_url = "/static/geojson/" + state_name + "/places.json";
-        if (UrlExists(place_url)) {
-            d3.json(place_url, function (error, data) {
-                var featureElement = svg
-                    .selectAll("path")
-                    .data(data.features)
-                    .enter()
-                    .append("path")
-                    .attr("class", "places")
-                    .attr("style", "pointer-events:auto;");
+        if (state_name != "") {
+            var place_url = "/static/geojson/" + state_name + "/places.json";
+            if (UrlExists(place_url)) {
+                d3.json(place_url, function (error, data) {
+                    var featureElement = svg
+                        .selectAll("path")
+                        .data(data.features)
+                        .enter()
+                        .append("path")
+                        .attr("class", "places")
+                        .attr("style", "pointer-events:auto;");
 
-                map.on("moveend", update);
+                    map.on("moveend", update);
 
-                update();
+                    update();
 
-                function update() {
-                    featureElement
-                        .attr("d", path)
-                        .on("mousemove", function (d) {
-                            tooltip.html("Place : " + d.properties.NAME);
-                            tooltip
-                                .attr("style", "display:block;")
-                                .attr(
-                                    "style",
-                                    "left:" +
-                                    (d3.event.clientX + 30) +
-                                    "px; top:" +
-                                    (d3.event.clientY - 30) +
-                                    "px"
-                                );
-                        })
-                        .on("mouseout", function () {
-                            tooltip.attr("style", "display:none;");
-                        });
-                }
-                places = d3.selectAll(".places");
-                // lower_sld.attr("visibility", "hidden");
-                return places;
-            });
+                    function update() {
+                        featureElement
+                            .attr("d", path)
+                            .on("mousemove", function (d) {
+                                tooltip.html("Place : " + d.properties.NAME);
+                                tooltip
+                                    .attr("style", "display:block;")
+                                    .attr(
+                                        "style",
+                                        "left:" +
+                                        (d3.event.clientX + 30) +
+                                        "px; top:" +
+                                        (d3.event.clientY - 30) +
+                                        "px"
+                                    );
+                            })
+                            .on("mouseout", function () {
+                                tooltip.attr("style", "display:none;");
+                            });
+                    }
+                    places = d3.selectAll(".places");
+                    // lower_sld.attr("visibility", "hidden");
+                    return places;
+                });
+            }
         }
     }
 
@@ -634,24 +654,26 @@
     var zip_codes;
 
     function load_zipcodes(state_fp) {
-        var postData1 = JSON.stringify({
-            state_fp: state_fp
-        });
-        d3.request(host + "/get_zipcode_data")
-            .header("Content-Type", "application/json")
-            .post(postData1, function (error, data) {
-                var cd_data = JSON.parse(data.response);
-                var zipcode_layer = L.geoJson(cd_data, {
-                    onEachFeature: function (cd_data, featureLayer) {
-                        // featureLayer.bindPopup(cd_data.properties.ZCTA5CE10);
-                        featureLayer.setStyle({
-                            fillColor: "violet",
-                            fillOpacity: 0.6,
-                            weight: 0.5
-                        });
-                        featureLayer.bindTooltip(cd_data.properties.ZCTA5CE10);
-                    }
-                }).addTo(map);
+        if (state_fp != "") {
+            var postData1 = JSON.stringify({
+                state_fp: state_fp
             });
+            d3.request(host + "/get_zipcode_data")
+                .header("Content-Type", "application/json")
+                .post(postData1, function (error, data) {
+                    var cd_data = JSON.parse(data.response);
+                    var zipcode_layer = L.geoJson(cd_data, {
+                        onEachFeature: function (cd_data, featureLayer) {
+                            // featureLayer.bindPopup(cd_data.properties.ZCTA5CE10);
+                            featureLayer.setStyle({
+                                fillColor: "violet",
+                                fillOpacity: 0.6,
+                                weight: 0.5
+                            });
+                            featureLayer.bindTooltip(cd_data.properties.ZCTA5CE10);
+                        }
+                    }).addTo(map);
+                });
+        }
     }
 })();
