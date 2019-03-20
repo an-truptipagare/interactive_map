@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "out",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
+"features": [
+{ "type": "Feature", "properties": { "STATEFP": "20", "CONCTYFP": "28410", "CONCTYNS": "02664357", "GEOID": "2028410", "NAME": "Greeley County", "NAMELSAD": "Greeley County unified government", "LSAD": "UG", "CLASSFP": "C3", "MTFCC": "G4120", "FUNCSTAT": "A", "ALAND": 2015424721, "AWATER": 0, "INTPTLAT": "+38.4804052", "INTPTLON": "-101.8059745" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -102.045253, 38.588746 ], [ -102.045212, 38.697567 ], [ -101.567094, 38.699669 ], [ -101.567482, 38.263145 ], [ -102.044464, 38.262412 ], [ -102.045253, 38.588746 ] ], [ [ -101.795364, 38.47868 ], [ -101.795292, 38.47357 ], [ -101.78623, 38.473157 ], [ -101.78539, 38.480212 ], [ -101.795417, 38.480169 ], [ -101.795364, 38.47868 ] ] ] } }
+]
+}

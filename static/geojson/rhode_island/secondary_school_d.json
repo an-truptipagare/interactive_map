@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "out",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
+"features": [
+{ "type": "Feature", "properties": { "STATEFP": "44", "SCSDLEA": "00420", "GEOID": "4400420", "NAME": "Foster-Glocester Regional School District", "LSAD": "00", "LOGRADE": "06", "HIGRADE": "12", "MTFCC": "G5410", "SDTYP": null, "FUNCSTAT": "E", "ALAND": 271777657, "AWATER": 9727071, "INTPTLAT": "+41.8431827", "INTPTLON": "-071.7150858" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -71.797774, 41.928553 ], [ -71.590108, 41.934098 ], [ -71.575107, 41.858599 ], [ -71.691032, 41.856553 ], [ -71.667794, 41.72746 ], [ -71.789704, 41.725198 ], [ -71.797774, 41.928553 ] ] ] } }
+]
+}
